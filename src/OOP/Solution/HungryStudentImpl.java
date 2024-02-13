@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public class HungryStudentImpl implements HungryStudent {
+    public HungryStudentImpl
     @Override
     public HungryStudent favorite(Restaurant r) throws UnratedFavoriteRestaurantException {
         return null;
