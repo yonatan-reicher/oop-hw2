@@ -7,7 +7,12 @@ import java.util.Collection;
 import java.util.Set;
 
 public class HungryStudentImpl implements HungryStudent {
-    public HungryStudentImpl
+    private int id;
+    private String name;
+    public HungryStudentImpl(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
     @Override
     public HungryStudent favorite(Restaurant r) throws UnratedFavoriteRestaurantException {
         return null;
