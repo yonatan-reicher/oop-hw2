@@ -3,16 +3,13 @@ package OOP.Solution;
 import OOP.Provided.HungryStudent;
 import OOP.Provided.Restaurant;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class HungryStudentImpl implements HungryStudent {
-    private int id;
-    private String name;
-    private HashSet<HungryStudent> friends = new HashSet<>();
-    private HashSet<Restaurant> favorites = new HashSet<>();
+    private final int id;
+    private final String name;
+    private final HashSet<HungryStudent> friends = new HashSet<>();
+    private final HashSet<Restaurant> favorites = new HashSet<>();
 
     public HungryStudentImpl(int id, String name) {
         this.id = id;
@@ -29,7 +26,8 @@ public class HungryStudentImpl implements HungryStudent {
         if (!ri.wasRatedBy(this)) {
             throw new UnratedFavoriteRestaurantException();
         }
-        return null;
+        favorites.add(r);
+        return this;
     }
 
     @Override
@@ -42,12 +40,13 @@ public class HungryStudentImpl implements HungryStudent {
         if (this == s) throw new SameStudentException();
         if (this.friends.contains(s)) throw new ConnectionAlreadyExistsException();
         this.friends.add(s);
+        ((HungryStudentImpl)s).friends.add(this);
         return s;
     }
 
     @Override
     public Set<HungryStudent> getFriends() {
-        return new HashSet<HungryStudent>(this.friends);
+        return new HashSet<>(this.friends);
     }
 
     @Override
@@ -84,6 +83,24 @@ public class HungryStudentImpl implements HungryStudent {
 
     @Override
     public int compareTo(HungryStudent o) {
-        return 0;
+        throw new RuntimeException("Not implemented!");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HungryStudentImpl that = (HungryStudentImpl) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        throw new RuntimeException("Not implemented!");
     }
 }
