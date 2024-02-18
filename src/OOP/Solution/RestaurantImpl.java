@@ -69,4 +69,12 @@ public class RestaurantImpl implements Restaurant {
     public int hashCode() {
         return id;
     }
+
+    public boolean wasRatedBy(HungryStudent student) {
+        return this.ratings.containsKey(student);
+    }
+
+    public int id() {
+        return this.id;
+    }
 }
