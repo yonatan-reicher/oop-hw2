@@ -49,12 +49,38 @@ public class RestaurantImpl implements Restaurant {
 
     @Override
     public int compareTo(Restaurant o) {
-        throw new RuntimeException("Not implemented!");
+        if (o.getClass() != RestaurantImpl.class) return 0;
+        RestaurantImpl r = (RestaurantImpl) o;
+        return Integer.compare(id, r.id);
     }
 
     @Override
     public String toString() {
-        throw new RuntimeException("Not implemented!");
+    /*
+     * @return the restaurant's description as a string in the following format:
+                * <format>
+     * Restaurant: <name>.
+     * Id: <id>.
+     * Distance: <dist>.
+     * Menu: <menuItem1, menuItem2, menuItem3...>.
+     * </format>
+     * Note: Menu items are ordered by lexicographical order, asc.
+                *
+     * Example:
+     *
+     * Restaurant: BBB.
+     * Id: 1.
+     * Distance: 5.
+     * Menu: Cola, French Fries, Steak.
+     */
+        String ret = "";
+        ret += "Restaurant: " + name + ".\n";
+        ret += "Id: " + id + ".\n";
+        ret += "Distance: " + distFromTech + ".\n";
+        ret += "Menu: ";
+        ret += menu.stream().reduce((x, y) -> x + ", " + y).orElse("");
+        ret += ".";
+        return ret;
     }
 
     @Override
@@ -76,5 +102,9 @@ public class RestaurantImpl implements Restaurant {
 
     public int id() {
         return this.id;
+    }
+
+    public String name() {
+        return this.name;
     }
 }

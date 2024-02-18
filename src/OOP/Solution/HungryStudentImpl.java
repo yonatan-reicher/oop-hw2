@@ -83,7 +83,9 @@ public class HungryStudentImpl implements HungryStudent {
 
     @Override
     public int compareTo(HungryStudent o) {
-        throw new RuntimeException("Not implemented!");
+        if (o.getClass() != HungryStudentImpl.class) return 0;
+        HungryStudentImpl s = (HungryStudentImpl) o;
+        return Integer.compare(id, s.id);
     }
 
     @Override
@@ -101,6 +103,11 @@ public class HungryStudentImpl implements HungryStudent {
 
     @Override
     public String toString() {
-        throw new RuntimeException("Not implemented!");
+        String ret = "Hungry student: " + name + ".\n";
+        ret += "Id: " + id + ".\n";
+        ret += "Favorites: ";
+        ret += String.join(", ", favorites.stream().map(r -> ((RestaurantImpl)r).name()).sorted().toList());
+        ret += ".";
+        return  ret;
     }
 }
