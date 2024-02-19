@@ -309,7 +309,11 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
             }
         }
         //remove the last comma and space
-        registered_students = new StringBuilder(registered_students.substring(0, registered_students.length() - 2));
+        //check if last char is a comma then a space and if it is remove it if it is
+        if (registered_students.charAt(registered_students.length() - 2) == ',' && registered_students.charAt(registered_students.length() - 1) == ' ') {
+            registered_students = new StringBuilder(registered_students.substring(0, registered_students.length() - 2));
+        }
+        registered_students.append(".");
         //create a string for the registered restaurants
         StringBuilder registered_resturants = new StringBuilder("Registered restaurants: ");
         for (Restaurant resturant : resturants) {
@@ -319,7 +323,11 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
             }
         }
         //remove the last comma and space
-        registered_resturants = new StringBuilder(registered_resturants.substring(0, registered_resturants.length() - 2));
+        //check if last char is a comma then a space and if it is remove it if it is
+        if (registered_resturants.charAt(registered_resturants.length() - 2) == ',' && registered_resturants.charAt(registered_resturants.length() - 1) == ' ') {
+            registered_resturants = new StringBuilder(registered_resturants.substring(0, registered_resturants.length() - 2));
+        }
+        registered_resturants.append(".");
         //create a string for the students and their friends
         StringBuilder students_and_friends = new StringBuilder("Students:\n");
         for (HungryStudent student : students) {
@@ -334,12 +342,16 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
                 }
             }
             //remove the last comma and space
-            students_and_friends = new StringBuilder(students_and_friends.substring(0, students_and_friends.length() - 2));
+            //check if last char is a comma then a space and if it is remove it if it is
+            if (students_and_friends.charAt(students_and_friends.length() - 2) == ',' && students_and_friends.charAt(students_and_friends.length() - 1) == ' ') {
+                students_and_friends = new StringBuilder(students_and_friends.substring(0, students_and_friends.length() - 2));
+            }
             students_and_friends.append("].\n");
         }
-        //students_and_friends += "End students.";
+        students_and_friends.append("End students.");
         //return the string
-        return registered_students + "\n" + registered_resturants + "\n" + students_and_friends;
+        String t_string = registered_students + "\n" + registered_resturants + "\n" + students_and_friends;
+        return t_string;
     }
     private boolean canGetAlongAux(HungryStudent s, Restaurant r, int t, Collection<HungryStudent> seen_friends) {
         //check if the student has the restaurant as a favorite
