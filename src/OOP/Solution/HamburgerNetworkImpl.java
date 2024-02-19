@@ -90,7 +90,7 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
             throw new HungryStudent.ConnectionAlreadyExistsException();
         }
         s1.addFriend(s2);
-        s2.addFriend(s1);
+        //s2.addFriend(s1);
         return this;
     }
 
