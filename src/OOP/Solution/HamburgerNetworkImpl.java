@@ -104,71 +104,109 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
         Collection<HungryStudent> friends = s.getFriends();
         //remove the friends who are not in the system
         friends.removeIf(friend -> !students.contains(friend));
-        //sort the friends by id in an increasing order after checking if they are instances of HungryStudentImpl
+        //sort the friends by id in an increasing order
         Collection<HungryStudent> sortedFriends = friends.stream().sorted((s1, s2) -> {
             if (s1 instanceof HungryStudentImpl && s2 instanceof HungryStudentImpl) {
                 return ((HungryStudentImpl) s1).id() - ((HungryStudentImpl) s2).id();
             }
             return 0;
-    }).toList();
-         //does this sort in friends? does collection saves the sort?
-        //create a new collection for the restaurants go through the friends and add their favorites to the collection, in a decreasing order of the resturant rating, if its equal then distance from the technion
-        //i want the linked list to have another integer in them indicating which friends it came from, starting from 0 up to the number of friends
-        Collection <resturant_with_counter> favorites = new LinkedList<resturant_with_counter>();
-        int counter = 0;
-        for (HungryStudent friend : sortedFriends) {
-            //create a new resturant with counter for each collection of favorite resturants of a friend in friends and increase it for every different element in friends
-            for (Restaurant resturant : friend.favorites()) {
-                //check if the resturant is in the system and add it, otherwise dont add it
-                if (resturants.contains(resturant)) {
-                    favorites.add(new resturant_with_counter(resturant, counter));
-                }
-            }
-            counter++;
-        }
-        //sort the restaurants by rating in a decreasing order and then by distance from the technion in a decreasing order then by id in an increasing order
-        Collection<resturant_with_counter> sortedFavorites = favorites.stream().sorted((r1, r2) -> {
-            //check if the counter is lower, first counters at the start always
-            if (r1.new_counter != r2.new_counter) {
-                return r1.new_counter - r2.new_counter;
-            }
-            int ratingComparison = Double.compare(r1.new_Restaurant.averageRating(), r2.new_Restaurant.averageRating());
-            if (ratingComparison != 0) {
-                return ratingComparison;
-            }
-           if (r1.new_Restaurant.distance() != r2.new_Restaurant.distance()) {
-                return r1.new_Restaurant.distance() - r2.new_Restaurant.distance();
-            }
-           //check if they're both of type RestaurantImpl and then check if their id's are the same
-            if (r1.new_Restaurant instanceof RestaurantImpl && r2.new_Restaurant instanceof RestaurantImpl) {
-                return ((RestaurantImpl) r1.new_Restaurant).id() - ((RestaurantImpl) r2.new_Restaurant).id();
-            }
-            return ratingComparison;
         }).toList();
-        // go through favorites and drop every resturant that exists before with a differen counter
-        for (resturant_with_counter resturant1 : sortedFavorites) {
-            for (resturant_with_counter resturant2: sortedFavorites)
-            {
+        //go through every friend in order and add their favorites to the collection using the method favoritesByrating and then add the resturants to the collection
+        Collection<Restaurant> favorites = new LinkedList<Restaurant>();
+        for (HungryStudent friend : sortedFriends) {
+            favorites.addAll(friend.favoritesByRating(0));
+        }
+        //go through the collection favorites and drop resturants that arent in the collection of resturants and also drop every resturant that exists before with a different friend
+        for (Restaurant resturant1 : favorites) {
+            if (!resturants.contains(resturant1)) {
+                favorites.remove(resturant1);
+                continue;
+            }
+            for (Restaurant resturant2 : favorites) {
                 //check if both resturants are of type RestaurantImpl and then check if their id's are the same
-                if (resturant1.new_Restaurant instanceof RestaurantImpl && resturant2.new_Restaurant instanceof RestaurantImpl) {
-                    if (((RestaurantImpl) resturant1.new_Restaurant).id() == ((RestaurantImpl) resturant2.new_Restaurant).id() && resturant1.new_counter != resturant2.new_counter)
-                    {
-                        sortedFavorites.remove(resturant2);
+                if (resturant1 instanceof RestaurantImpl && resturant2 instanceof RestaurantImpl) {
+                    if (((RestaurantImpl) resturant1).id() == ((RestaurantImpl) resturant2).id() && resturant1 != resturant2) {
+                        favorites.remove(resturant2);
                     }
                 }
             }
         }
-        //create a new collection for the restaurants and add the resturants from the favorites collection to it in the same order but without the counter
-        Collection<Restaurant> favorites_resturants = new LinkedList<Restaurant>();
-        for (resturant_with_counter resturant : sortedFavorites) {
-            favorites_resturants.add(resturant.new_Restaurant);
-        }
-        return favorites_resturants;
+        return favorites;
     }
+
+
+//        //check if student is in the system
+//        if (!students.contains(s)) {
+//            throw new HungryStudent.StudentNotInSystemException();
+//        }
+//        //create a new body for friends of s in the system and sort it by id of student in an increasing order
+//        Collection<HungryStudent> friends = s.getFriends();
+//        //remove the friends who are not in the system
+//        friends.removeIf(friend -> !students.contains(friend));
+//        //sort the friends by id in an increasing order after checking if they are instances of HungryStudentImpl
+//        Collection<HungryStudent> sortedFriends = friends.stream().sorted((s1, s2) -> {
+//            if (s1 instanceof HungryStudentImpl && s2 instanceof HungryStudentImpl) {
+//                return ((HungryStudentImpl) s1).id() - ((HungryStudentImpl) s2).id();
+//            }
+//            return 0;
+//    }).toList();
+//         //does this sort in friends? does collection saves the sort?
+//        //create a new collection for the restaurants go through the friends and add their favorites to the collection, in a decreasing order of the resturant rating, if its equal then distance from the technion
+//        //i want the linked list to have another integer in them indicating which friends it came from, starting from 0 up to the number of friends
+//        Collection <resturant_with_counter> favorites = new LinkedList<resturant_with_counter>();
+//        int counter = 0;
+//        for (HungryStudent friend : sortedFriends) {
+//            //create a new resturant with counter for each collection of favorite resturants of a friend in friends and increase it for every different element in friends
+//            for (Restaurant resturant : friend.favorites()) {
+//                //check if the resturant is in the system and add it, otherwise dont add it
+//                if (resturants.contains(resturant)) {
+//                    favorites.add(new resturant_with_counter(resturant, counter));
+//                }
+//            }
+//            counter++;
+//        }
+//        //sort the restaurants by rating in a decreasing order and then by distance from the technion in a decreasing order then by id in an increasing order
+//        Collection<resturant_with_counter> sortedFavorites = favorites.stream().sorted((r1, r2) -> {
+//            //check if the counter is lower, first counters at the start always
+//            if (r1.new_counter != r2.new_counter) {
+//                return r1.new_counter - r2.new_counter;
+//            }
+//            int ratingComparison = Double.compare(r1.new_Restaurant.averageRating(), r2.new_Restaurant.averageRating());
+//            if (ratingComparison != 0) {
+//                return ratingComparison;
+//            }
+//           if (r1.new_Restaurant.distance() != r2.new_Restaurant.distance()) {
+//                return r1.new_Restaurant.distance() - r2.new_Restaurant.distance();
+//            }
+//           //check if they're both of type RestaurantImpl and then check if their id's are the same
+//            if (r1.new_Restaurant instanceof RestaurantImpl && r2.new_Restaurant instanceof RestaurantImpl) {
+//                return ((RestaurantImpl) r1.new_Restaurant).id() - ((RestaurantImpl) r2.new_Restaurant).id();
+//            }
+//            return ratingComparison;
+//        }).toList();
+//        // go through favorites and drop every resturant that exists before with a differen counter
+//        for (resturant_with_counter resturant1 : sortedFavorites) {
+//            for (resturant_with_counter resturant2: sortedFavorites)
+//            {
+//                //check if both resturants are of type RestaurantImpl and then check if their id's are the same
+//                if (resturant1.new_Restaurant instanceof RestaurantImpl && resturant2.new_Restaurant instanceof RestaurantImpl) {
+//                    if (((RestaurantImpl) resturant1.new_Restaurant).id() == ((RestaurantImpl) resturant2.new_Restaurant).id() && resturant1.new_counter != resturant2.new_counter)
+//                    {
+//                        sortedFavorites.remove(resturant2);
+//                    }
+//                }
+//            }
+//        }
+//        //create a new collection for the restaurants and add the resturants from the favorites collection to it in the same order but without the counter
+//        Collection<Restaurant> favorites_resturants = new LinkedList<Restaurant>();
+//        for (resturant_with_counter resturant : sortedFavorites) {
+//            favorites_resturants.add(resturant.new_Restaurant);
+//        }
+//        return favorites_resturants;
+
 
     @Override
     public Collection<Restaurant> favoritesByDist(HungryStudent s) throws HungryStudent.StudentNotInSystemException {
-        //copy the function from last time and change the sorting to distance and then rating
         //check if student is in the system
         if (!students.contains(s)) {
             throw new HungryStudent.StudentNotInSystemException();
@@ -177,67 +215,34 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
         Collection<HungryStudent> friends = s.getFriends();
         //remove the friends who are not in the system
         friends.removeIf(friend -> !students.contains(friend));
-        //sort the friends by id in an increasing order after checking if they are instances of HungryStudentImpl
+        //sort the friends by id in an increasing order
         Collection<HungryStudent> sortedFriends = friends.stream().sorted((s1, s2) -> {
             if (s1 instanceof HungryStudentImpl && s2 instanceof HungryStudentImpl) {
                 return ((HungryStudentImpl) s1).id() - ((HungryStudentImpl) s2).id();
             }
             return 0;
         }).toList();
-        //does this sort in friends? does collection saves the sort?
-        //create a new collection for the restaurants go through the friends and add their favorites to the collection, in a decreasing order of the resturant rating, if its equal then distance from the technion
-        //i want the linked list to have another integer in them indicating which friends it came from, starting from 0 up to the number of friends
-        Collection <resturant_with_counter> favorites = new LinkedList<resturant_with_counter>();
-        int counter = 0;
+        //go through every friend in order and add their favorites to the collection using the method favoritesByrating and then add the resturants to the collection
+        Collection<Restaurant> favorites = new LinkedList<Restaurant>();
         for (HungryStudent friend : sortedFriends) {
-            //create a new resturant with counter for each collection of favorite resturants of a friend in friends and increase it for every different element in friends
-            for (Restaurant resturant : friend.favorites()) {
-                //check if the resturant is in the system and add it, otherwise dont add it
-                if (resturants.contains(resturant)) {
-                    favorites.add(new resturant_with_counter(resturant, counter));
-                }
-            }
-            counter++;
+            favorites.addAll(friend.favoritesByDist(Integer.MAX_VALUE));
         }
-        //sort the restaurants by distance from the technion in a decreasing order and then by rating in a decreasing order then by id in an increasing order
-        Collection<resturant_with_counter> sortedFavorites = favorites.stream().sorted((r1, r2) -> {
-            //check if the counter is lower, first counters at the start always
-            if (r1.new_counter != r2.new_counter) {
-                return r1.new_counter - r2.new_counter;
+        //go through the collection favorites and drop resturants that arent in the collection of resturants and also drop every resturant that exists before with a different friend
+        for (Restaurant resturant1 : favorites) {
+            if (!resturants.contains(resturant1)) {
+                favorites.remove(resturant1);
+                continue;
             }
-            if (r1.new_Restaurant.distance() != r2.new_Restaurant.distance()) {
-                return r1.new_Restaurant.distance() - r2.new_Restaurant.distance();
-            }
-            int ratingComparison = Double.compare(r1.new_Restaurant.averageRating(), r2.new_Restaurant.averageRating());
-            if (ratingComparison != 0) {
-                return ratingComparison;
-            }
-            //check if they're both of type RestaurantImpl and then check if their id's are the same
-            if (r1.new_Restaurant instanceof RestaurantImpl && r2.new_Restaurant instanceof RestaurantImpl) {
-                return ((RestaurantImpl) r1.new_Restaurant).id() - ((RestaurantImpl) r2.new_Restaurant).id();
-            }
-            return 0;
-        }).toList();
-        // go through favorites and drop every resturant that exists before with a differen counter
-        for (resturant_with_counter resturant1 : sortedFavorites) {
-            for (resturant_with_counter resturant2: sortedFavorites)
-            {
+            for (Restaurant resturant2 : favorites) {
                 //check if both resturants are of type RestaurantImpl and then check if their id's are the same
-                if (resturant1.new_Restaurant instanceof RestaurantImpl && resturant2.new_Restaurant instanceof RestaurantImpl) {
-                    if (((RestaurantImpl) resturant1.new_Restaurant).id() == ((RestaurantImpl) resturant2.new_Restaurant).id() && resturant1.new_counter != resturant2.new_counter)
-                    {
-                        sortedFavorites.remove(resturant2);
+                if (resturant1 instanceof RestaurantImpl && resturant2 instanceof RestaurantImpl) {
+                    if (((RestaurantImpl) resturant1).id() == ((RestaurantImpl) resturant2).id() && resturant1 != resturant2) {
+                        favorites.remove(resturant2);
                     }
                 }
             }
         }
-        //create a new collection for the restaurants and add the resturants from the favorites collection to it in the same order but without the counter
-        Collection<Restaurant> favorites_resturants = new LinkedList<Restaurant>();
-        for (resturant_with_counter resturant : sortedFavorites) {
-            favorites_resturants.add(resturant.new_Restaurant);
-        }
-        return favorites_resturants;
-
+        return favorites;
     }
     //create function string tostring
     public String toString(){
@@ -264,41 +269,41 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
          * End students.
          * */
         //create a string for the registered students
-        String registered_students = "Registered students: ";
+        StringBuilder registered_students = new StringBuilder("Registered students: ");
         for (HungryStudent student : students) {
             //check if student is an instance of HungryStudentImpl and then add the id to the string
             if (student instanceof HungryStudentImpl) {
-                registered_students += ((HungryStudentImpl) student).id() + ", ";
+                registered_students.append(((HungryStudentImpl) student).id()).append(", ");
             }
         }
         //remove the last comma and space
-        registered_students = registered_students.substring(0, registered_students.length() - 2);
+        registered_students = new StringBuilder(registered_students.substring(0, registered_students.length() - 2));
         //create a string for the registered restaurants
-        String registered_resturants = "Registered restaurants: ";
+        StringBuilder registered_resturants = new StringBuilder("Registered restaurants: ");
         for (Restaurant resturant : resturants) {
             //check if resturant is an instance of RestaurantImpl and then add the id to the string
             if (resturant instanceof RestaurantImpl) {
-                registered_resturants += ((RestaurantImpl) resturant).id() + ", ";
+                registered_resturants.append(((RestaurantImpl) resturant).id()).append(", ");
             }
         }
         //remove the last comma and space
-        registered_resturants = registered_resturants.substring(0, registered_resturants.length() - 2);
+        registered_resturants = new StringBuilder(registered_resturants.substring(0, registered_resturants.length() - 2));
         //create a string for the students and their friends
-        String students_and_friends = "Students:\n";
+        StringBuilder students_and_friends = new StringBuilder("Students:\n");
         for (HungryStudent student : students) {
             //check if student is an instance of HungryStudentImpl and then add the id and the friends to the string
             if (student instanceof HungryStudentImpl) {
-                students_and_friends += ((HungryStudentImpl) student).id() + " -> [";
+                students_and_friends.append(((HungryStudentImpl) student).id()).append(" -> [");
             }
             for (HungryStudent friend : student.getFriends()) {
                 //check if friend is an instance of HungryStudentImpl and then add the id to the string
                 if (friend instanceof HungryStudentImpl) {
-                    students_and_friends += ((HungryStudentImpl) friend).id() + ", ";
+                    students_and_friends.append(((HungryStudentImpl) friend).id()).append(", ");
                 }
             }
             //remove the last comma and space
-            students_and_friends = students_and_friends.substring(0, students_and_friends.length() - 2);
-            students_and_friends += "].\n";
+            students_and_friends = new StringBuilder(students_and_friends.substring(0, students_and_friends.length() - 2));
+            students_and_friends.append("].\n");
         }
         //students_and_friends += "End students.";
         //return the string
