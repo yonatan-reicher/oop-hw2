@@ -90,7 +90,7 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
             throw new HungryStudent.ConnectionAlreadyExistsException();
         }
         s1.addFriend(s2);
-        //s2.addFriend(s1);
+        s2.addFriend(s1);
         return this;
     }
 
@@ -350,8 +350,7 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
         }
         students_and_friends.append("End students.");
         //return the string
-        String t_string = registered_students + "\n" + registered_resturants + "\n" + students_and_friends;
-        return t_string;
+        return registered_students + "\n" + registered_resturants + "\n" + students_and_friends;
     }
     private boolean canGetAlongAux(HungryStudent s, Restaurant r, int t, Collection<HungryStudent> seen_friends) {
         //check if the student has the restaurant as a favorite
