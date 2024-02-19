@@ -4,6 +4,7 @@ import OOP.Provided.HungryStudent;
 import OOP.Provided.Restaurant;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class RestaurantImpl implements Restaurant {
         this.id = id;
         this.name = name;
         this.distFromTech = distFromTech;
-        this.menu = menu;
+        this.menu = new HashSet<>(menu);
     }
 
     @Override

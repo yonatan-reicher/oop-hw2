@@ -53,31 +53,23 @@ public class HungryStudentImpl implements HungryStudent {
     public Collection<Restaurant> favoritesByRating(int rLimit) {
         return this.favorites.stream()
                 .filter(x -> x.averageRating() >= rLimit)
-                .sorted((x, y) -> {
-                    if (x.averageRating() > y.averageRating()) return 1;
-                    if (x.averageRating() < y.averageRating()) return -1;
-                    if (x.distance() < y.distance()) return 1;
-                    if (x.distance() > y.distance()) return -1;
-                    if (((RestaurantImpl)x).id() < ((RestaurantImpl)y).id()) return 1;
-                    if (((RestaurantImpl)x).id() > ((RestaurantImpl)y).id()) return -1;
-                    return 0;
-                })
+                .sorted(Comparator
+                        .comparing(Restaurant::averageRating).reversed()
+                        .thenComparing(Restaurant::distance)
+                        .thenComparing(x -> ((RestaurantImpl)x).id())
+                )
                 .toList();
     }
 
     @Override
     public Collection<Restaurant> favoritesByDist(int dLimit) {
         return this.favorites.stream()
-                .filter(x -> x.distance() < dLimit)
-                .sorted((x, y) -> {
-                    if (x.distance() < y.distance()) return 1;
-                    if (x.distance() > y.distance()) return -1;
-                    if (x.averageRating() > y.averageRating()) return 1;
-                    if (x.averageRating() < y.averageRating()) return -1;
-                    if (((RestaurantImpl)x).id() < ((RestaurantImpl)y).id()) return 1;
-                    if (((RestaurantImpl)x).id() > ((RestaurantImpl)y).id()) return -1;
-                    return 0;
-                })
+                .filter(x -> x.distance() <= dLimit)
+                .sorted(Comparator
+                        .comparing(Restaurant::distance).reversed()
+                        .thenComparing(Restaurant::averageRating).reversed()
+                        .thenComparing(x -> ((RestaurantImpl)x).id())
+                )
                 .toList();
     }
 
