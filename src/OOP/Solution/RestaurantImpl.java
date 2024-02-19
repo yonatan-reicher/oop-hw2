@@ -78,7 +78,7 @@ public class RestaurantImpl implements Restaurant {
         ret += "Id: " + id + ".\n";
         ret += "Distance: " + distFromTech + ".\n";
         ret += "Menu: ";
-        ret += menu.stream().reduce((x, y) -> x + ", " + y).orElse("");
+        ret += menu.stream().sorted().reduce((x, y) -> x + ", " + y).orElse("");
         ret += ".";
         return ret;
     }
