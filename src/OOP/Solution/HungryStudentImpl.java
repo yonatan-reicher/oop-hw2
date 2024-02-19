@@ -40,7 +40,6 @@ public class HungryStudentImpl implements HungryStudent {
         if (this == s) throw new SameStudentException();
         if (this.friends.contains(s)) throw new ConnectionAlreadyExistsException();
         this.friends.add(s);
-        ((HungryStudentImpl)s).friends.add(this);
         return s;
     }
 
