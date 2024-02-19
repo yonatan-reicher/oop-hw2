@@ -116,22 +116,38 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
         for (HungryStudent friend : sortedFriends) {
             favorites.addAll(friend.favoritesByRating(0));
         }
+        //create a new collection for the resutrants only it is of type resturant_with_remove
+        Collection<resturant_with_remove> resturants_with_removed_list = new LinkedList<resturant_with_remove>();
+        for (Restaurant resturant : favorites) {
+            resturants_with_removed_list.add(new resturant_with_remove(resturant));
+        }
         //go through the collection favorites and drop resturants that arent in the collection of resturants and also drop every resturant that exists before with a different friend
-        for (Restaurant resturant1 : favorites) {
-            if (!resturants.contains(resturant1)) {
-                favorites.remove(resturant1);
+        int first_counter = 0;
+        for (resturant_with_remove resturant1 : resturants_with_removed_list) {
+            int second_counter = 0;
+            if (!resturants.contains(resturant1.new_Restaurant) || resturant1.remove) {
+                resturant1.remove=true;
+                first_counter++;
                 continue;
             }
-            for (Restaurant resturant2 : favorites) {
+            for (resturant_with_remove resturant2 : resturants_with_removed_list) {
                 //check if both resturants are of type RestaurantImpl and then check if their id's are the same
-                if (resturant1 instanceof RestaurantImpl && resturant2 instanceof RestaurantImpl) {
-                    if (((RestaurantImpl) resturant1).id() == ((RestaurantImpl) resturant2).id() && resturant1 != resturant2) {
-                        favorites.remove(resturant2);
+                if (resturant1.new_Restaurant instanceof RestaurantImpl && resturant2.new_Restaurant instanceof RestaurantImpl) {
+                    if (((RestaurantImpl) resturant1.new_Restaurant).id() == ((RestaurantImpl) resturant2.new_Restaurant).id() && first_counter != second_counter) {
+                        resturant2.remove=true;
                     }
                 }
+                second_counter++;
+            }
+            first_counter++;
+        }
+        Collection<Restaurant> return_favorites = new LinkedList<Restaurant>();
+        for (resturant_with_remove resturant : resturants_with_removed_list) {
+            if (!resturant.remove) {
+                return_favorites.add(resturant.new_Restaurant);
             }
         }
-        return favorites;
+        return return_favorites;
     }
 
 
@@ -225,24 +241,40 @@ public class HamburgerNetworkImpl implements HamburgerNetwork {
         //go through every friend in order and add their favorites to the collection using the method favoritesByrating and then add the resturants to the collection
         Collection<Restaurant> favorites = new LinkedList<Restaurant>();
         for (HungryStudent friend : sortedFriends) {
-            favorites.addAll(friend.favoritesByDist(Integer.MAX_VALUE));
+            favorites.addAll(friend.favoritesByDist((Integer.MAX_VALUE)));
+        }
+        //create a new collection for the resutrants only it is of type resturant_with_remove
+        Collection<resturant_with_remove> resturants_with_removed_list = new LinkedList<resturant_with_remove>();
+        for (Restaurant resturant : favorites) {
+            resturants_with_removed_list.add(new resturant_with_remove(resturant));
         }
         //go through the collection favorites and drop resturants that arent in the collection of resturants and also drop every resturant that exists before with a different friend
-        for (Restaurant resturant1 : favorites) {
-            if (!resturants.contains(resturant1)) {
-                favorites.remove(resturant1);
+        int first_counter = 0;
+        for (resturant_with_remove resturant1 : resturants_with_removed_list) {
+            int second_counter = 0;
+            if (!resturants.contains(resturant1.new_Restaurant) || resturant1.remove) {
+                resturant1.remove=true;
+                first_counter++;
                 continue;
             }
-            for (Restaurant resturant2 : favorites) {
+            for (resturant_with_remove resturant2 : resturants_with_removed_list) {
                 //check if both resturants are of type RestaurantImpl and then check if their id's are the same
-                if (resturant1 instanceof RestaurantImpl && resturant2 instanceof RestaurantImpl) {
-                    if (((RestaurantImpl) resturant1).id() == ((RestaurantImpl) resturant2).id() && resturant1 != resturant2) {
-                        favorites.remove(resturant2);
+                if (resturant1.new_Restaurant instanceof RestaurantImpl && resturant2.new_Restaurant instanceof RestaurantImpl) {
+                    if (((RestaurantImpl) resturant1.new_Restaurant).id() == ((RestaurantImpl) resturant2.new_Restaurant).id() && first_counter != second_counter) {
+                        resturant2.remove=true;
                     }
                 }
+                second_counter++;
+            }
+            first_counter++;
+        }
+        Collection<Restaurant> return_favorites = new LinkedList<Restaurant>();
+        for (resturant_with_remove resturant : resturants_with_removed_list) {
+            if (!resturant.remove) {
+                return_favorites.add(resturant.new_Restaurant);
             }
         }
-        return favorites;
+        return return_favorites;
     }
     //create function string tostring
     public String toString(){
